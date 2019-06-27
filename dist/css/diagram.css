@@ -49,7 +49,7 @@ svg > g {
   stroke-width: 1px; }
 
 .edgePath .path, path.path {
-  stroke: green !important;
+  stroke: green;
   stroke-width: 1.5px; }
 
 .edgeLabel {

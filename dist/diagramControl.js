@@ -440,7 +440,7 @@ System.register(['./libs/mermaid/dist/mermaidAPI', 'app/core/time_series2', 'app
           value: function substituteHashPrefixedNotation(graphDefinition, data) {
             // inspect the string, locate all # prefixed items, and replace them with the value
             // of the series. If no matching series is found, leave it alone
-            var matches = graphDefinition.match(/(?:#|!|@|&)(\w+)/g);
+            var matches = graphDefinition.match(/(?:#|!|@|&|%)(\w+)/g);
             if (matches === null) return graphDefinition;
             // check if there is a composite with a matching name
             for (var i = 0; i < matches.length; i++) {
@@ -470,6 +470,10 @@ System.register(['./libs/mermaid/dist/mermaidAPI', 'app/core/time_series2', 'app
                       displayedValue = data[aComposite.name].valueFormattedWithPrefix;
                       graphDefinition = graphDefinition.replace('&' + aMatch, displayedValue);
                       break;
+                    case '%':
+                      displayedValue = this.rgbToHex(data[aComposite.name].color);
+                      graphDefinition = graphDefinition.replace('%' + aMatch, displayedValue);
+                      break;
                   }
                 }
               }
@@ -487,11 +491,29 @@ System.register(['./libs/mermaid/dist/mermaidAPI', 'app/core/time_series2', 'app
                       displayedValue = data[seriesItem.alias].valueFormatted;
                       graphDefinition = graphDefinition.replace('@' + aMatch, displayedValue);
                       break;
+                    case '%':
+                      displayedValue = this.rgbToHex(data[seriesItem.alias].color);
+                      graphDefinition = graphDefinition.replace('%' + aMatch, displayedValue);
                   }
                 }
               }
             }
             return graphDefinition;
+          }
+        }, {
+          key: 'rgbToHex',
+          value: function rgbToHex(rgbString) {
+            function paddedHex(s) {
+
+              var h1 = parseInt(s).toString(16);
+              if (h1.length < 2) {
+                h1 = "0" + h1;
+              }
+              return h1;
+            }
+            var matches = rgbString.match(/([0-9]+),([0-9]+),([0-9]+)/);
+
+            return "#" + paddedHex(matches[1]) + paddedHex(matches[2]) + paddedHex(matches[3]);
           }
         }, {
           key: 'setValues',
